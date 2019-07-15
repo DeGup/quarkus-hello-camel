@@ -8,11 +8,14 @@ public class CamelRoute extends RouteBuilder {
 
     @Override
     public void configure() {
-        from("timer:keep-alive?period={{camel.timer-route.period}}")
-                .id("timer-route-java")
+        from("timer:keep-alive?period=5000").id("timer-route-java")
+                .log("Creating test file in /tmp/")
                 .setBody(constant(I_AM_ALIVE_MESSAGE))
-                .log("${body}")
-                .to("log:keep-alive");
+                .to("file:/tmp/test.txt");
+
+        from("file:/tmp/test.txt?delete=true")
+                .log("Found a File!")
+                .to("log:done");
 
     }
 
